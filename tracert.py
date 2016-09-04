@@ -12,6 +12,9 @@ import re
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+print("----------------------------------------------------------------------------")
+print("Please input traceroute result and press Enter, then Ctrl+D to finish input:")
+
 IS_PY_2 = sys.version_info < (3,0)
 
 # 为python2引入urllib2
@@ -69,22 +72,28 @@ url = "http://apis.baidu.com/showapi_open_bus/ip/ip?ip="
 pattern = re.compile("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
 
 if len(sys.argv) > 1:
-	command = "traceroute " + sys.argv[1]
+	command = "tracepath " + sys.argv[1]
 	r = os.popen(command)
 	_info = r.readlines()  #读取命令行的输出到一个list
 else:
 	_info = sys.stdin.readlines()
+
 
 for line in _info:
 	ip = re.findall(pattern,line)
 	if(ip):
 		_ip1 = ''
 		_ip1 = ip[0]
-		resp = request(url + _ip1)
-		info = json.loads(resp)
-		if((info)['showapi_res_code'] == -1):
-			print(info['showapi_res_error'])
+		command2 = "tellip " + _ip1
+		r1 = os.popen(command2)
+		_info1 = r1.readlines()
+		if((len(_info1[1]) < 17 )):
+			resp = request(url + _ip1)
+			info = json.loads(resp)
+			if((info)['showapi_res_code'] == -1):
+				print(info['showapi_res_error'])
+			else:
+				text = IPInfo(info['showapi_res_body'])
+				print(text)
 		else:
-			text = IPInfo(info['showapi_res_body'])
-			print(text)
-	
+			print(_info1[1] + '\b')
