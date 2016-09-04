@@ -6,8 +6,7 @@
 
 import json
 import collections
-import sys
-import fileinput
+import sys, os
 import re
 
 reload(sys)
@@ -66,55 +65,24 @@ class IPInfo (object):
 			text = text + "%s " % (self._ip_info[i])
 		return text
 
-
-
-
-
 url = "http://apis.baidu.com/showapi_open_bus/ip/ip?ip="
-#url = "http://apistore.baidu.com/microservice/iplookup?ip="
-#http://apistore.baidu.com/apiworks/servicedetail/2565.html
-
 pattern = re.compile("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
 
-for line in fileinput.input():
-	if line:
-		exit()
-	else:
-		#print('---'+line)
-		ip = re.findall(pattern,line)
-		#print(ip)
-		all_ip = len(ip)
-		cur_idx = 1
-		for n in ip:
-			_url = url + n
-			#print(_url)
-			#request = urllib.request.urlopen(url).read().decode("utf-8")
-			#info = json.loads(result,object_pairs_hook=collections.OrderedDict)
-			resp = request(_url)
-			#print('resp' '%s' % resp)
-			info = json.loads(resp)
-			# info = json.loads(resp,object_pairs_hook=collections.OrderedDict)
-			if((info)['showapi_res_code'] == -1):
-				#print(info)
-				print(info['showapi_res_error'])
-			else:
-				#print('info' '%s' % info)
-				#print(type(info))
-				#print("%s" % info.get('showapi_res_body', 'none').get('isp'))
-				#print(info['showapi_res_body']['isp'])
-				#print("%s" % (showapi_res_body['isp'])
-				#print(info['showapi_res_body']['ip'],": ", info['showapi_res_body']['isp'], info['showapi_res_body']['country'], info['showapi_res_body']['region'],info['showapi_res_body']['city'],info['showapi_res_body']['county'])
-				"""
-				print(" %s %s %s %s %s %s " % (
-					info['showapi_res_body']['ip'],
-					info['showapi_res_body']['isp'],
-					#info.get['showapi_res_body']['isp'],
-					info['showapi_res_body']['country'],
-					info['showapi_res_body']['region'],
-					info['showapi_res_body']['city'],
-					info['showapi_res_body']['county'])
-				)
-				"""
-				text = IPInfo(info['showapi_res_body'])
-				print(text)
+if len(sys.argv) > 1:
+	command = "traceroute " + sys.argv[1]
+	r = os.popen(command)
+	_info = r.readlines()  #读取命令行的输出到一个list
+else:
+	_info = sys.stdin.readlines()
+
+for line in _info:
+	ip = re.findall(pattern,line)
+	for n in ip:
+		resp = request(url + n)
+		info = json.loads(resp)
+		if((info)['showapi_res_code'] == -1):
+			print(info['showapi_res_error'])
+		else:
+			text = IPInfo(info['showapi_res_body'])
+			print(text)
 	
