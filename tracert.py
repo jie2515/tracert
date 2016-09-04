@@ -1,8 +1,8 @@
 #!/usr/bin/python
 #_*_coding: utf-8_*_
-#version: 0.1
+#version: 1.0
 #python2.6 & python3.2
-#note
+
 
 import json
 import collections
@@ -11,6 +11,9 @@ import re
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+print("----------------------------------------------------------------------------")
+print("Please input traceroute result and press Enter, then Ctrl+D to finish input:")
 
 IS_PY_2 = sys.version_info < (3,0)
 
