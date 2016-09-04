@@ -77,16 +77,9 @@ else:
 
 for line in _info:
 	ip = re.findall(pattern,line)
-	#print(ip)
 	if(ip):
 		_ip1 = ''
 		_ip1 = ip[0]
-		# for _ip in ip:
-		# 	#print(url + _ip)
-		# 	_ip1 = ''
-		# 	_ip1 = _ip
-		#print(_ip1)
-		#print(url + _ip1)
 		resp = request(url + _ip1)
 		info = json.loads(resp)
 		if((info)['showapi_res_code'] == -1):
